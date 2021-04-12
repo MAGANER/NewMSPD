@@ -23,9 +23,37 @@ void MainMenu::init_widgets(Fl_Window* window)
 	def->labelsize(14);
 	def->color(FL_RED);
 
-	MainMenu::diary_path_field = new Fl_Input(120, 80, 500, 30,  "diary path:");
-	MainMenu::key_field		   = new Fl_Input(120, 130, 500, 30, "AES key:");
-	MainMenu::password_field   = new Fl_Input(120, 170, 500, 30, "password:");
+	using namespace MainMenu;
+	using namespace MainMenu::inner;
+	diary_path_field = new Fl_Input(120, 80, 500, 30,  "diary path:");
+	diary_path_field->callback((Fl_Callback*)input_callback,(void*)InputType::Diary);
+	diary_path_field->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
+
+	key_field		 = new Fl_Input(120, 130, 500, 30, "AES key:");
+	key_field->callback((Fl_Callback*)input_callback, (void*)InputType::Key);
+	key_field->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
+
+	password_field   = new Fl_Input(120, 170, 500, 30, "password:");
+	password_field->callback((Fl_Callback*)input_callback, (void*)InputType::Password);
+	password_field->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
 	window->end();
+}
+void MainMenu::inner::input_callback(Fl_Input* input, void* type)
+{
+	switch ((int)type)
+	{
+	case InputType::Diary:
+		diary_path = (char*)input->value();
+		diary_val_entered = true;
+		break;
+	case InputType::Password:
+		password = (char*)input->value();
+		password_val_entered = true;
+		break;
+	case InputType::Key:
+		key = (char*)input->value();
+		password_val_entered = true;
+		break;
+	}
 }
