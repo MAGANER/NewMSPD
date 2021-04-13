@@ -1,9 +1,11 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
 #include "FL/Fl.H"
 #include "FL/Fl_Window.H"
 #include "FL/Fl_Box.H"
 #include"FL/Fl_Input.H"
 #include"FL/Fl_Button.H"
+#include<filesystem>
 namespace MainMenu
 {
 	const int WINDOW_WIDTH = 720;
@@ -26,6 +28,7 @@ namespace MainMenu
 
 	namespace inner
 	{
+		
 		enum InputType
 		{
 			Diary,
@@ -34,5 +37,6 @@ namespace MainMenu
 		};
 		static void input_callback(Fl_Input* input,void* type);
 		static void read_callback(Fl_Widget* button_ptr,void* window);
+		static void run_error_window(const char* _error, Fl_Window* main_win);
 	};
 };
