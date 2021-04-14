@@ -6,6 +6,8 @@
 #include"FL/Fl_Input.H"
 #include"FL/Fl_Button.H"
 #include<filesystem>
+#include<fstream>
+#include"Encryption.h"
 namespace MainMenu
 {
 	const int WINDOW_WIDTH = 720;
@@ -20,8 +22,9 @@ namespace MainMenu
 	static Fl_Input* password_field   = nullptr;
 	static Fl_Input* key_field		  = nullptr;
 
-	static bool read = false;
-	static Fl_Button* read_button = nullptr;
+	static Fl_Button* read_button         = nullptr;
+	static Fl_Button* generate_key_button = nullptr;
+	static Fl_Button* create_diary_button = nullptr;
 
 	Fl_Window* init_window();
 	void init_widgets(Fl_Window* window);
@@ -37,6 +40,13 @@ namespace MainMenu
 		};
 		static void input_callback(Fl_Input* input,void* type);
 		static void read_callback(Fl_Widget* button_ptr,void* window);
-		static void run_error_window(const char* _error, Fl_Window* main_win);
+		static void generate_callback(Fl_Widget* button_ptr,void*window);
+
+
+		static void get_key_path_callback(Fl_Input* input, void* window);
+
+		static void run_sub_window(const char* message,
+								   const char* title,
+								   Fl_Window* main_win);
 	};
 };
