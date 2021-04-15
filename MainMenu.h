@@ -15,11 +15,11 @@ namespace MainMenu
 
 
 	static char* diary_path = nullptr; 
-	static char* password   = nullptr;
+	static char* iv         = nullptr;
 	static char* key        = nullptr;
 
 	static Fl_Input* diary_path_field = nullptr;
-	static Fl_Input* password_field   = nullptr;
+	static Fl_Input* iv_field         = nullptr;
 	static Fl_Input* key_field		  = nullptr;
 
 	static Fl_Button* read_button         = nullptr;
@@ -40,9 +40,11 @@ namespace MainMenu
 		};
 		static void input_callback(Fl_Input* input,void* type);
 		static void read_callback(Fl_Widget* button_ptr,void* window);
-		static void generate_callback(Fl_Widget* button_ptr,void*window);
 
+		static void create_diary_callback(Fl_Widget* button_ptr);
+		static void get_new_diary_path_callback(Fl_Input* input, void* window);
 
+		static void generate_callback(Fl_Widget* button_ptr);
 		static void get_key_path_callback(Fl_Input* input, void* window);
 
 		static void run_sub_window(const char* message,

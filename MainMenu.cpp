@@ -33,15 +33,18 @@ void MainMenu::init_widgets(Fl_Window* window)
 	key_field->callback((Fl_Callback*)input_callback, (void*)InputType::Key);
 	key_field->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
-	password_field   = new Fl_Input(120, 170, 500, 30, "password:");
-	password_field->callback((Fl_Callback*)input_callback, (void*)InputType::Password);
-	password_field->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
+	iv_field   = new Fl_Input(120, 170, 500, 30, "IV:");
+	iv_field->callback((Fl_Callback*)input_callback, (void*)InputType::Password);
+	iv_field->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
-	read_button = new Fl_Button(100, 210, 60, 30, "read");
+	read_button = new Fl_Button(140, 210, 60, 30, "read");
 	read_button->callback(read_callback,(void*)window);
 
-	generate_key_button = new Fl_Button(240, 210, 90, 30, "generate key");
-	generate_key_button->callback(generate_callback, (void*)window);
+	generate_key_button = new Fl_Button(280, 210, 90, 30, "generate key");
+	generate_key_button->callback(generate_callback);
+
+	create_diary_button = new Fl_Button(480, 210, 90, 30,"create diary");
+	create_diary_button->callback(create_diary_callback);
 
 	window->end();
 }
@@ -53,7 +56,7 @@ void MainMenu::inner::input_callback(Fl_Input* input, void* type)
 		diary_path = (char*)input->value();
 		break;
 	case InputType::Password:
-		password = (char*)input->value();
+		iv = (char*)input->value();
 		break;
 	case InputType::Key:
 		key = (char*)input->value();
@@ -63,9 +66,9 @@ void MainMenu::inner::input_callback(Fl_Input* input, void* type)
 void MainMenu::inner::read_callback(Fl_Widget* button_ptr, void* window)
 {
 	bool empty_diary    = diary_path == nullptr || strlen(diary_path) == 0;
-	bool empty_password = password   == nullptr || strlen(password)   == 0;
+	bool empty_iv		= iv		 == nullptr || strlen(iv)		  == 0;
 	bool empty_key		= key		 == nullptr || strlen(key)		  == 0;
-	bool empty = empty_diary || empty_password || empty_key;
+	bool empty = empty_diary || empty_iv || empty_key;
 
 
 	if (!empty)
@@ -86,7 +89,30 @@ void MainMenu::inner::read_callback(Fl_Widget* button_ptr, void* window)
 	else run_sub_window("enter all required information!","error!", static_cast<Fl_Window*>(window));
 	
 }
-void MainMenu::inner::generate_callback(Fl_Widget* button_ptr,void* window)
+void MainMenu::inner::create_diary_callback(Fl_Widget* button_ptr)
+{
+	Fl_Window* diary_creation_window = new Fl_Window(600, 150, "diary creation");
+	Fl_Input* input = new Fl_Input(120, 50, 450, 30, "enter diary path:");
+	input->callback((Fl_Callback*)get_new_diary_path_callback, (void*)diary_creation_window);
+	input->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
+
+	diary_creation_window->end();
+	diary_creation_window->show();
+}
+void MainMenu::inner::get_new_diary_path_callback(Fl_Input* input, void* window)
+{
+	const char* path = input->value();
+
+	std::ofstream diary_file(path);
+	if (diary_file)
+	{
+		//just create empty file
+		diary_file.close();
+		static_cast<Fl_Window*>(window)->hide();
+	}
+}
+
+void MainMenu::inner::generate_callback(Fl_Widget* button_ptr)
 {
 	Fl_Window* key_generation_window = new Fl_Window(600, 150, "random key generation");
 	Fl_Input* input = new Fl_Input(100, 50, 450, 30, "enter key path:");
@@ -102,13 +128,15 @@ void MainMenu::inner::get_key_path_callback(Fl_Input* input, void* window)
 
 	using namespace Encryption;
 	key_iv data = get_random_key();
-	string key = convert_bytes(data.first);
-
+	string key  = convert_bytes(data.first);
+	string iv   = convert_bytes(data.second);
 	ofstream key_file(generated_key_path);
 
 	if (key_file) 
 	{
-		key_file << key;
+		key_file << "key:"+key
+				 << endl
+				 <<"IV:"+iv;
 		key_file.close();
 		static_cast<Fl_Window*>(window)->hide();
 	}
