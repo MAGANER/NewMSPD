@@ -78,11 +78,10 @@ void MainMenu::inner::read_callback(Fl_Widget* button_ptr, void* window)
 		bool does_diary_exist = fs::exists(diary);
 		if (does_diary_exist)
 		{
-			//try to read and decrypt
-
 			Fl_Window* win = static_cast<Fl_Window*>(window);
 			win->hide();
 
+			DiaryManager::run();
 		}
 		else run_sub_window(strcat(diary_path, " doesn't exist!"),"error!", static_cast<Fl_Window*>(window));
 	}
@@ -140,26 +139,4 @@ void MainMenu::inner::get_key_path_callback(Fl_Input* input, void* window)
 		key_file.close();
 		static_cast<Fl_Window*>(window)->hide();
 	}
-}
-void MainMenu::inner::run_sub_window(const char* message,
-									 const char* title,
-									 Fl_Window* main_win)
-{
-	Fl_Window* error = new Fl_Window(300, 50, title);
-
-	int main_win_x = main_win->x_root();
-	int main_win_y = main_win->y_root();
-
-	error->resize(main_win_x + (int)WINDOW_WIDTH / 2,
-		main_win_y + (int)WINDOW_HEIGHT / 2,
-		300,
-		50);
-
-	Fl_Box* def = new Fl_Box(0, 0, 300, 50,message);
-	def->box(FL_FLAT_BOX);
-	def->labelfont(FL_BOLD);
-	def->labelsize(14);
-
-	error->end();
-	error->show();
 }

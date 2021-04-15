@@ -1,13 +1,11 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
-#include "FL/Fl.H"
-#include "FL/Fl_Window.H"
-#include "FL/Fl_Box.H"
 #include"FL/Fl_Input.H"
-#include"FL/Fl_Button.H"
 #include<filesystem>
 #include<fstream>
 #include"Encryption.h"
+#include"DiaryManager.h"
+
 namespace MainMenu
 {
 	const int WINDOW_WIDTH = 720;
@@ -47,8 +45,5 @@ namespace MainMenu
 		static void generate_callback(Fl_Widget* button_ptr);
 		static void get_key_path_callback(Fl_Input* input, void* window);
 
-		static void run_sub_window(const char* message,
-								   const char* title,
-								   Fl_Window* main_win);
 	};
 };
