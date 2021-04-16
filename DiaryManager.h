@@ -8,28 +8,36 @@
 #include"FL/Fl_Text_Buffer.H"
 #include"FL/Fl_Input.H"
 #include"Diary.h"
+#include"Encryption.h"
 #include<vector>
 #include<fstream>
 #include<string>
 #include<ctime>
 #include<iostream>
+#include<tuple>
 
 namespace DiaryManager
 {
-	void run();
+	extern void run(const string& diary_path,
+					const string& key,
+					const string& iv);
 
 	static Fl_Window* window = nullptr;
 	static vector<DiaryPage*> pages;
 
 	static Fl_Text_Buffer* buff = nullptr;
 	static string entered_topic;
-
+	
+	static tuple<string,string,string> coding_data;
+	
 	namespace inner
 	{
 		static void read_diary(const string& path);
-		static void read_pages_callback(Fl_Widget* button_ptr,void* pages);
-		static void add_page_callback(Fl_Widget* button_ptr,void* pages);
-		static void save_page_callback(Fl_Widget* button_ptr, void* pages);
+		static void save_diary();
+
+		static void read_pages_callback(Fl_Widget* button_ptr);
+		static void add_page_callback(Fl_Widget* button_ptr);
+		static void save_page_callback(Fl_Widget* button_ptr);
 		static void get_topic_callback(Fl_Input* input);
 	};
 };
