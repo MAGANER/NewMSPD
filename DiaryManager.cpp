@@ -37,10 +37,12 @@ void DiaryManager::inner::read_pages_callback(Fl_Widget* button_ptr)
 		Fl_Window* window = new Fl_Window(720, 650, "pages");
 		Fl_Browser* browser = new Fl_Browser(20, 20, 600, 600);
 		browser->type(FL_MULTI_BROWSER);
+		browser->callback(show_page_callback);
 		window->resizable(*browser);
 		for (auto& p : pages)
 		{
-			browser->add(p->topic.c_str());
+			string label = p->topic + ":" + p->date;
+			browser->add(label.c_str());
 		}
 
 		window->end();
@@ -152,4 +154,21 @@ vector<string> DiaryManager::inner::split_text(const string& text,const string& 
 
 
 	return pages;
+}
+void DiaryManager::inner::show_page_callback(Fl_Widget* browser_ptr)
+{
+	Fl_Browser* browser = (Fl_Browser*)browser_ptr;
+	
+	int choosen = browser->value()-1;
+	DiaryPage* page = pages[choosen];
+
+	string label = page->topic + ":" + page->date;
+	Fl_Window* window = new Fl_Window(720, 650, label.c_str());
+	Fl_Box* text = new Fl_Box(20, 20, 600, 600,page->body.c_str());
+	text->type(FL_NO_BOX);
+	window->resizable(text);
+
+	window->end();
+	window->show();
+
 }
