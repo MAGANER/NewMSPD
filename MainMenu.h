@@ -1,5 +1,8 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
+#include "FL/Fl.H"
+#include "FL/Fl_Window.H"
+#include "FL/Fl_Box.H"
 #include"FL/Fl_Input.H"
 #include<filesystem>
 #include<fstream>
@@ -11,11 +14,6 @@ namespace MainMenu
 	const int WINDOW_WIDTH = 720;
 	const int WINDOW_HEIGHT = 280;
 
-
-	static char* diary_path = nullptr; 
-	static char* iv         = nullptr;
-	static char* key        = nullptr;
-
 	static Fl_Input* diary_path_field = nullptr;
 	static Fl_Input* iv_field         = nullptr;
 	static Fl_Input* key_field		  = nullptr;
@@ -26,6 +24,10 @@ namespace MainMenu
 
 	Fl_Window* init_window();
 	void init_widgets(Fl_Window* window);
+
+	static string iv = "";
+	static string key = "";
+	static string diary_path = "";
 
 	namespace inner
 	{

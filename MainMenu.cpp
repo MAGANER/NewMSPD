@@ -53,22 +53,22 @@ void MainMenu::inner::input_callback(Fl_Input* input, void* type)
 	switch ((int)type)
 	{
 	case InputType::Diary:
-		diary_path = (char*)input->value();
+		diary_path = string(input->value());
 		break;
 	case InputType::Password:
-		iv = (char*)input->value();
+		iv = string(input->value());
 		break;
 	case InputType::Key:
-		key = (char*)input->value();
+		key = string(input->value());
 		break;
 	}
 }
 void MainMenu::inner::read_callback(Fl_Widget* button_ptr, void* window)
 {
-	bool empty_diary    = diary_path == nullptr || strlen(diary_path) == 0;
-	bool empty_iv		= iv		 == nullptr || strlen(iv)		  == 0;
-	bool empty_key		= key		 == nullptr || strlen(key)		  == 0;
-	bool empty = empty_diary || empty_iv || empty_key;
+	bool empty_diary    = diary_path.empty();
+	bool empty_iv		= iv.empty();
+	bool empty_key		= key.empty();
+	bool empty = empty_diary && empty_iv && empty_key;
 
 
 	if (!empty)
@@ -81,9 +81,10 @@ void MainMenu::inner::read_callback(Fl_Widget* button_ptr, void* window)
 			Fl_Window* win = static_cast<Fl_Window*>(window);
 			win->hide();
 
-			DiaryManager::run();
+	
+			DiaryManager::run(diary_path,key,iv);
 		}
-		else run_sub_window(strcat(diary_path, " doesn't exist!"),"error!", static_cast<Fl_Window*>(window));
+		else run_sub_window(strcat((char*)diary_path.c_str(), " doesn't exist!"),"error!", static_cast<Fl_Window*>(window));
 	}
 	else run_sub_window("enter all required information!","error!", static_cast<Fl_Window*>(window));
 	
