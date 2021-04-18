@@ -7,6 +7,7 @@
 #include"FL/Fl_Text_Editor.H"
 #include"FL/Fl_Text_Buffer.H"
 #include"FL/Fl_Input.H"
+#include"FL/Fl_Browser.h"
 #include"Diary.h"
 #include"Encryption.h"
 #include<vector>
@@ -33,6 +34,8 @@ namespace DiaryManager
 	namespace inner
 	{
 		static void read_diary(const string& path);
+		static vector<string> split_text(const string& text, const string& delimiter);
+
 		static void save_diary();
 
 		static void read_pages_callback(Fl_Widget* button_ptr);

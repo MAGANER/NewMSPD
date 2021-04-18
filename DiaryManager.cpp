@@ -6,6 +6,7 @@ void DiaryManager::run(const string& diary_path,
 {
 
 	coding_data = make_tuple(diary_path, key, iv);
+	inner::read_diary(get<0>(coding_data));
 
 	window = new Fl_Window(340, 100, "My personal secret diary");
 	
@@ -30,6 +31,20 @@ void DiaryManager::inner::read_pages_callback(Fl_Widget* button_ptr)
 	if (pages.empty())
 	{
 		run_sub_window("diary is empty!", "oops!",window);
+	}
+	else
+	{
+		Fl_Window* window = new Fl_Window(720, 650, "pages");
+		Fl_Browser* browser = new Fl_Browser(20, 20, 600, 600);
+		browser->type(FL_MULTI_BROWSER);
+		window->resizable(*browser);
+		for (auto& p : pages)
+		{
+			browser->add(p->topic.c_str());
+		}
+
+		window->end();
+		window->show();
 	}
 }
 void DiaryManager::inner::add_page_callback(Fl_Widget* button_ptr)
@@ -83,18 +98,58 @@ void DiaryManager::inner::save_diary()
 
 		for (auto& page : pages)
 		{
-			auto _key = Encryption::convert_to_bytes(string(get<1>(coding_data)));
-			auto _iv = Encryption::convert_to_bytes(string(get<2>(coding_data)));
+			auto _key = Encryption::convert_to_bytes(get<1>(coding_data));
+			auto _iv = Encryption::convert_to_bytes(get<2>(coding_data));
+
 			auto key_iv = make_pair(_key, _iv);
 
-			string body = Encryption::encrypt(key_iv, page->body);
-			string topic = Encryption::encrypt(key_iv, "topic:" + page->topic);
-			string date = Encryption::encrypt(key_iv, "date:" + page->date);
-			string next_string = Encryption::encrypt(key_iv, "\n");
+			string text = page->body + "<del>" + page->topic+"<del>" + page->date;
+			string cipher = Encryption::encrypt(key_iv, text);
 			string end = "<bor>";
-		
-			file << body << next_string << topic << next_string << date << end;
+
+			file << cipher << end;
 		}
 		file.close();
 	}
+}
+void DiaryManager::inner::read_diary(const string& path)
+{
+	ifstream file(path);
+	string cipher;
+	file >> cipher;
+	vector<string> encrypted_pages = split_text(cipher,"<bor>");
+	
+	for (auto& p : encrypted_pages)
+	{
+		auto key = Encryption::convert_to_bytes(get<1>(coding_data));
+		auto iv = Encryption::convert_to_bytes(get<2>(coding_data));
+
+		auto key_iv = make_pair(key, iv);
+		string decrypted_text = Encryption::decrypt(key_iv, p);
+		vector<string> page_data = split_text(decrypted_text, "<del>");
+		if (page_data.size() == 3)
+		{
+			DiaryPage* page = new DiaryPage(page_data[0], page_data[1], page_data[2]);
+			pages.push_back(page);
+		}
+	}
+}
+vector<string> DiaryManager::inner::split_text(const string& text,const string& delimiter)
+{
+	string s = text;
+
+	vector<string> pages;
+
+	size_t pos = 0;
+	string page;
+	while ((pos = s.find(delimiter)) != std::string::npos)
+	{
+		page = s.substr(0, pos);
+		pages.push_back(page);
+		s.erase(0, pos + delimiter.length());
+	}
+	pages.push_back(s);
+
+
+	return pages;
 }
