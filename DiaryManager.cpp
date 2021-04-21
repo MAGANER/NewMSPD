@@ -73,7 +73,7 @@ void DiaryManager::inner::add_page_callback(Fl_Widget* button_ptr)
 
 	//encrypt and write down diary if clicked
 	Fl_Button* save_button = new Fl_Button(640, 40, 70, 20, "save");
-	save_button->callback(save_page_callback);
+	save_button->callback(save_page_callback,(void*) window);
 	save_button->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
 	//obtain page topic
@@ -88,7 +88,7 @@ void DiaryManager::inner::get_topic_callback(Fl_Input* input)
 {
 	entered_topic = input->value();
 }
-void DiaryManager::inner::save_page_callback(Fl_Widget* button_ptr)
+void DiaryManager::inner::save_page_callback(Fl_Widget* button_ptr, void* window)
 {
 	if (!entered_topic.empty())
 	{
@@ -105,6 +105,10 @@ void DiaryManager::inner::save_page_callback(Fl_Widget* button_ptr)
 		pages.push_back(page);
 
 		save_diary();//write it down
+
+
+		//close window
+		static_cast<Fl_Window*>(window)->hide();
 	}
 }
 void DiaryManager::inner::save_diary()
