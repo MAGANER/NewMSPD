@@ -1,3 +1,8 @@
+/*
+	DiaryManager provides an ability to
+	read, edit, add new pages.
+*/
+
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include"Common.h"
@@ -23,14 +28,22 @@ namespace DiaryManager
 					const string& key,
 					const string& iv);
 
-	static Fl_Window* window = nullptr;
-	static vector<DiaryPage*> pages;
 
-	static Fl_Text_Buffer* buff = nullptr;
-	static string entered_topic;
-	
-	static tuple<string,string,string> coding_data;
-	
+	//data bound to this module
+	namespace inner_data
+	{
+		static Fl_Window* window = nullptr;
+		static vector<DiaryPage*> pages;
+
+
+		static Fl_Text_Buffer* new_page_editor_buff = nullptr;
+		static string entered_topic;
+
+		static tuple<string, string, string> coding_data;
+	};
+
+	//this namespace provides functions used inside this module
+	//it can not be used somewhere else
 	namespace inner
 	{
 		static void read_diary(const string& path);
