@@ -164,9 +164,14 @@ void DiaryManager::inner::show_page_callback(Fl_Widget* browser_ptr)
 
 	string label = page->topic + ":" + page->date;
 	Fl_Window* window = new Fl_Window(720, 650, label.c_str());
-	Fl_Box* text = new Fl_Box(20, 20, 600, 600,page->body.c_str());
-	text->type(FL_NO_BOX);
-	window->resizable(text);
+
+
+	Fl_Text_Buffer* buff = new Fl_Text_Buffer();
+	Fl_Text_Editor* editor = new Fl_Text_Editor(20, 20, 600, 600);
+	buff->text(page->body.c_str());
+	editor->buffer(buff);
+	editor->clear_visible_focus();
+	window->resizable(editor);
 
 	window->end();
 	window->show();
