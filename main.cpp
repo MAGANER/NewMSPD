@@ -2,8 +2,8 @@
 
 int main(int argc, char** argv) 
 {
-	Fl_Window* window = MainMenu::init_window();
-	MainMenu::init_widgets(window);
+	Fl_Window* window = MainMenu::inner::init_window();
+	MainMenu::inner::init_widgets(window);
 
 	window->show(argc, argv);
 

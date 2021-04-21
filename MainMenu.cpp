@@ -1,6 +1,8 @@
 #include"MainMenu.h"
+using namespace MainMenu::inner_data;
 
-Fl_Window* MainMenu::init_window()
+
+Fl_Window* MainMenu::inner::init_window()
 {
 	Fl_Window* window = new Fl_Window(WINDOW_WIDTH, WINDOW_HEIGHT);
 	window->label("My personal secret diary");
@@ -8,7 +10,7 @@ Fl_Window* MainMenu::init_window()
 
 	return window;
 }
-void MainMenu::init_widgets(Fl_Window* window)
+void MainMenu::inner::init_widgets(Fl_Window* window)
 {
 	//init main label
 	Fl_Box* label = new Fl_Box(200, 0, 300, 50, "My personal secret diary");
