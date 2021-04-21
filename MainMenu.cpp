@@ -28,42 +28,67 @@ void MainMenu::inner::init_widgets(Fl_Window* window)
 	using namespace MainMenu;
 	using namespace MainMenu::inner;
 	diary_path_field = new Fl_Input(120, 80, 500, 30,  "diary path:");
-	diary_path_field->callback((Fl_Callback*)input_callback,(void*)InputType::Diary);
+	diary_path_field->callback((Fl_Callback*)get_diary_callback);
 	diary_path_field->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
+	
+	key_file_field   = new Fl_Input(120, 130, 500, 30, "key file field:");
+	key_file_field->callback((Fl_Callback*)get_key_file,(void*) window);
+	key_file_field->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
-	key_field		 = new Fl_Input(120, 130, 500, 30, "AES key:");
-	key_field->callback((Fl_Callback*)input_callback, (void*)InputType::Key);
-	key_field->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
-
-	iv_field   = new Fl_Input(120, 170, 500, 30, "IV:");
-	iv_field->callback((Fl_Callback*)input_callback, (void*)InputType::Password);
-	iv_field->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
-
-	read_button = new Fl_Button(140, 210, 60, 30, "read");
+	read_button = new Fl_Button(140, 175, 60, 30, "read");
 	read_button->callback(read_callback,(void*)window);
 
-	generate_key_button = new Fl_Button(280, 210, 90, 30, "generate key");
+	generate_key_button = new Fl_Button(280, 175, 90, 30, "generate key");
 	generate_key_button->callback(generate_callback);
 
-	create_diary_button = new Fl_Button(480, 210, 90, 30,"create diary");
+	create_diary_button = new Fl_Button(480, 175, 90, 30,"create diary");
 	create_diary_button->callback(create_diary_callback);
 
 	window->end();
 }
-void MainMenu::inner::input_callback(Fl_Input* input, void* type)
+void MainMenu::inner::get_key_file(Fl_Input* input,void*window)
 {
-	switch ((int)type)
+	ifstream file(input->value());
+
+	vector<string> lines;
+	while (file)
 	{
-	case InputType::Diary:
-		diary_path = string(input->value());
-		break;
-	case InputType::Password:
-		iv = string(input->value());
-		break;
-	case InputType::Key:
-		key = string(input->value());
-		break;
+		string line;
+		file >> line;
+		lines.push_back(line);
 	}
+
+
+	//last line can be space
+	if (lines.size() >= 2)
+	{
+		string key = lines[0];
+		size_t begin = key.find("key:");
+		if (begin == string::npos)
+		{
+			run_sub_window("incorrect key!", "error", static_cast<Fl_Window*>(window));
+		}
+		else
+		{
+			inner_data::key =  key.substr(4);
+		}
+
+		string iv = lines[1];
+		begin = iv.find("IV:");
+		if (begin == string::npos)
+		{
+			run_sub_window("incorrect iv!", "error", static_cast<Fl_Window*>(window));
+		}
+		else
+		{
+			inner_data::iv = iv.substr(3);
+		}
+		
+	}
+}
+void MainMenu::inner::get_diary_callback(Fl_Input* input)
+{
+	diary_path = string(input->value());
 }
 void MainMenu::inner::read_callback(Fl_Widget* button_ptr, void* window)
 {
