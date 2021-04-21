@@ -126,13 +126,12 @@ void DiaryManager::inner::save_diary()
 			//get special CryptoPP objects
 			auto _key = Encryption::convert_to_bytes(get<1>(coding_data));
 			auto _iv = Encryption::convert_to_bytes(get<2>(coding_data));
-
+			
 			auto key_iv = make_pair(_key, _iv);
 
 			string text = page->body + "<del>" + page->topic+"<del>" + page->date;
 			string cipher = Encryption::encrypt(key_iv, text);
 			string end = "<bor>";
-
 			file << cipher << end;
 		}
 		file.close();
@@ -143,21 +142,27 @@ void DiaryManager::inner::read_diary(const string& path)
 	//read file and split with special "tag"
 	ifstream file(path);
 	string cipher;
-	file >> cipher;
+	while (file)
+	{
+		char ch;
+		file.get(ch);
+		cipher += ch;
+	}
 	vector<string> encrypted_pages = split_text(cipher,"<bor>");
-	
+
 	for (auto& p : encrypted_pages)
 	{
 		//get special CryptoPP objects
-		auto key = Encryption::convert_to_bytes(get<1>(coding_data));
-		auto iv = Encryption::convert_to_bytes(get<2>(coding_data));
-
+		auto _key = Encryption::convert_to_bytes(get<1>(coding_data));
+		auto _iv = Encryption::convert_to_bytes(get<2>(coding_data));
+		
 		//decrypt and split it to body, topic, date
-		auto key_iv = make_pair(key, iv);
+		auto key_iv = make_pair(_key, _iv);
 		string decrypted_text = Encryption::decrypt(key_iv, p);
 		vector<string> page_data = split_text(decrypted_text, "<del>");
-
+		
 		//if it's all right, add it to all pages
+
 		if (page_data.size() == 3)
 		{
 			DiaryPage* page = new DiaryPage(page_data[0], page_data[1], page_data[2]);
@@ -182,7 +187,6 @@ vector<string> DiaryManager::inner::split_text(const string& text,const string& 
 		s.erase(0, pos + delimiter.length());
 	}
 	pages.push_back(s);
-
 
 	return pages;
 }
