@@ -56,5 +56,6 @@ namespace DiaryManager
 		static void save_page_callback(Fl_Widget* button_ptr, void* window);
 		static void get_topic_callback(Fl_Input* input);
 		static void show_page_callback(Fl_Widget* browser_ptr);
+		static void read_whole_diary_callback(Fl_Widget* button_ptr);
 	};
 };

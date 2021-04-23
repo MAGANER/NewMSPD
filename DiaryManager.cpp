@@ -55,9 +55,38 @@ void DiaryManager::inner::read_pages_callback(Fl_Widget* button_ptr)
 			browser->add(label.c_str());
 		}
 
+		//provide ability to read whole diary not separated
+		Fl_Button* read_all_pages = new Fl_Button(640, 20, 60, 20, "read all");
+		read_all_pages->callback(read_whole_diary_callback);
+		read_all_pages->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
+
 		window->end();
 		window->show();
 	}
+}
+void DiaryManager::inner::read_whole_diary_callback(Fl_Widget* button_ptr)
+{
+	Fl_Window* window = new Fl_Window(720, 650, "diary");
+
+
+	//create editor and pass to it page text
+	Fl_Text_Buffer* buff = new Fl_Text_Buffer();
+
+	string text;
+	for (auto& p : pages)
+	{
+		text += p->body + "\n" + "topic:" + p->topic + "\n" + "date:" + p->date + "\n----------" + "\n";
+	}
+	buff->text(text.c_str());
+
+	Fl_Text_Editor* editor = new Fl_Text_Editor(20, 20, 600, 600);
+
+	editor->buffer(buff);
+	editor->clear_visible_focus();//editor ignores keyboard
+	window->resizable(editor);
+
+	window->end();
+	window->show();
 }
 void DiaryManager::inner::add_page_callback(Fl_Widget* button_ptr)
 {
