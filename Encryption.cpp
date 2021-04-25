@@ -45,21 +45,48 @@ Encryption::SecByteBlock Encryption::convert_to_bytes(const string& key)
 
 std::string Encryption::encrypt(const key_iv& key_iv, const string& text)
 {
-	CFB_Mode<AES>::Encryption encryptor(key_iv.first, AES::DEFAULT_KEYLENGTH, key_iv.second);
+	try
+	{
+		CBC_Mode< AES >::Encryption e;
+		e.SetKeyWithIV(key_iv.first, key_iv.first.size(), key_iv.second);
 
-	CryptoPP::byte* data = (CryptoPP::byte*)text.c_str();
-	size_t data_len = strlen((const char*)data) + 1;
+		string cipher;
+		StringSource s(text, true,
+			new StreamTransformationFilter(e,
+				new StringSink(cipher)
+			) // StreamTransformationFilter
+		); // StringSource
 
-	encryptor.ProcessData(data, data, data_len);
-	return string((const char*)data);
+		while ((cipher.size() % 16) != 0)cipher += (char)0;
+
+		return cipher;
+	}
+	catch (const Exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		exit(1);
+	}
 }
-std::string Encryption::decrypt(const key_iv& key_iv, const string& text)
+
+std::string Encryption::decrypt(const key_iv& key_iv, const string& cipher)
 {
-	CFB_Mode<AES>::Decryption decryptor(key_iv.first, AES::DEFAULT_KEYLENGTH, key_iv.second);
+	cout << "cipher size:" << cipher.size() << endl;
+	try
+	{
+		CBC_Mode< AES >::Decryption d;
+		d.SetKeyWithIV(key_iv.first, key_iv.first.size(), key_iv.second);
 
-	CryptoPP::byte* data = (CryptoPP::byte*)text.c_str();
-	size_t data_len = strlen((const char*)data) + 1;
-
-	decryptor.ProcessData(data, data, data_len);
-	return string((const char*)data);
+		string recovered;
+		StringSource s(cipher, true,
+			new StreamTransformationFilter(d,
+				new StringSink(recovered)
+			) // StreamTransformationFilter
+		); // StringSource
+		return recovered;
+	}
+	catch (const Exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		exit(1);
+	}
 }

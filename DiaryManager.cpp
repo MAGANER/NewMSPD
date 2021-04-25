@@ -123,7 +123,6 @@ void DiaryManager::inner::save_page_callback(Fl_Widget* button_ptr, void* window
 	{
 		//make page
 		string text = new_page_editor_buff->text();
-
 		//get current time
 		time_t now;
 		time(&now);
@@ -143,59 +142,78 @@ void DiaryManager::inner::save_page_callback(Fl_Widget* button_ptr, void* window
 void DiaryManager::inner::save_diary()
 {
 	//zero element is diary path
-	ofstream file(get<0>(coding_data));
+	ofstream file(get<0>(coding_data),ios::binary | ios::app | ios::out);
 
 	if (file)
 	{
 		//it will be updated
 		file.clear();
 
+		int counter = 0;
 		for (auto& page : pages)
 		{
 			//get special CryptoPP objects
 			auto _key = Encryption::convert_to_bytes(get<1>(coding_data));
 			auto _iv = Encryption::convert_to_bytes(get<2>(coding_data));
-			
+
 			auto key_iv = make_pair(_key, _iv);
 
 			string text = page->body + "<del>" + page->topic+"<del>" + page->date;
-			string cipher = Encryption::encrypt(key_iv, text);
+			auto cipher = Encryption::encrypt(key_iv, text);
+
+			cout << cipher.size() << endl;
+
 			string end = "<bor>";
-			file << cipher << end;
+			counter++;
+			//file <<'('<<cipher.first<<')' << cipher.second << end;
+			for (auto& ch : cipher)file << ch;
+			file << end;
 		}
 		file.close();
 	}
 }
+
 void DiaryManager::inner::read_diary(const string& path)
 {
 	//read file and split with special "tag"
-	ifstream file(path);
+	
 	string cipher;
-	while (file)
+	if (!fs::is_empty(fs::path(path)))
 	{
-		char ch;
-		file.get(ch);
-		cipher += ch;
-	}
-	vector<string> encrypted_pages = split_text(cipher,"<bor>");
+		ifstream file(path,ios::binary);
 
-	for (auto& p : encrypted_pages)
-	{
-		//get special CryptoPP objects
-		auto _key = Encryption::convert_to_bytes(get<1>(coding_data));
-		auto _iv = Encryption::convert_to_bytes(get<2>(coding_data));
-		
-		//decrypt and split it to body, topic, date
-		auto key_iv = make_pair(_key, _iv);
-		string decrypted_text = Encryption::decrypt(key_iv, p);
-		vector<string> page_data = split_text(decrypted_text, "<del>");
-		
-		//if it's all right, add it to all pages
+		std::stringstream strStream;
+		strStream << file.rdbuf();
+		cipher = strStream.str();
+		file.close();
 
-		if (page_data.size() == 3)
+		vector<string> encrypted_pages = split_text(cipher,"<bor>");
+
+		//there is empty line, maybe it's always the last one
+		for (int i = 0; i < encrypted_pages.size(); ++i)
 		{
-			DiaryPage* page = new DiaryPage(page_data[0], page_data[1], page_data[2]);
-			pages.push_back(page);
+			if (encrypted_pages[i].empty())
+				encrypted_pages.erase(encrypted_pages.begin() + i);
+		}
+		for (auto& p : encrypted_pages)
+		{
+			//get special CryptoPP objects
+			auto _key = Encryption::convert_to_bytes(get<1>(coding_data));
+			auto _iv = Encryption::convert_to_bytes(get<2>(coding_data));
+
+			//decrypt and split it to body, topic, date
+			auto key_iv = make_pair(_key, _iv);
+
+			cout << "encrypted:" << p.size() << endl;
+			string decrypted_text = Encryption::decrypt(key_iv, p);
+			vector<string> page_data = split_text(decrypted_text, "<del>");
+		
+			//if it's all right, add it to all pages
+			if (page_data.size() == 3)
+			{
+				DiaryPage* page = new DiaryPage(page_data[0], page_data[1], page_data[2]);
+				pages.push_back(page);
+			}
 		}
 	}
 }

@@ -21,6 +21,7 @@
 #include<ctime>
 #include<iostream>
 #include<tuple>
+#include<filesystem>
 
 namespace DiaryManager
 {
@@ -57,5 +58,7 @@ namespace DiaryManager
 		static void get_topic_callback(Fl_Input* input);
 		static void show_page_callback(Fl_Widget* browser_ptr);
 		static void read_whole_diary_callback(Fl_Widget* button_ptr);
+
+		namespace fs = std::filesystem;
 	};
 };
