@@ -63,14 +63,12 @@ std::string Encryption::encrypt(const key_iv& key_iv, const string& text)
 	}
 	catch (const Exception& e)
 	{
-		std::cerr << e.what() << std::endl;
 		exit(1);
 	}
 }
 
 std::string Encryption::decrypt(const key_iv& key_iv, const string& cipher)
 {
-	cout << "cipher size:" << cipher.size() << endl;
 	try
 	{
 		CBC_Mode< AES >::Decryption d;
@@ -86,7 +84,6 @@ std::string Encryption::decrypt(const key_iv& key_iv, const string& cipher)
 	}
 	catch (const Exception& e)
 	{
-		std::cerr << e.what() << std::endl;
 		exit(1);
 	}
 }
