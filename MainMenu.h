@@ -8,6 +8,7 @@
 #include<fstream>
 #include"Encryption.h"
 #include"DiaryManager.h"
+#include"resource.h"
 
 namespace MainMenu
 {

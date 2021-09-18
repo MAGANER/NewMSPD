@@ -22,6 +22,9 @@
 #include<iostream>
 #include<tuple>
 #include<filesystem>
+#include"resource.h"
+#include"FL/Fl_RGB_Image.H"
+#include"FL/Fl_PNG_Image.H"
 
 namespace DiaryManager
 {

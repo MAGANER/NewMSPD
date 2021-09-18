@@ -9,6 +9,10 @@ void DiaryManager::run(const string& diary_path,
 	coding_data = make_tuple(diary_path, key, iv);
 	inner::read_diary(get<0>(coding_data));
 
+
+	//icon, load and create it
+	Fl_RGB_Image* img = new Fl_PNG_Image("mspd.png");
+
 	//creates the main window, providing two buttons to 
 	//open new page editor and existing pages wizard
 	window = new Fl_Window(340, 100, "My personal secret diary");
@@ -26,6 +30,10 @@ void DiaryManager::run(const string& diary_path,
 	add_page->callback(add_page_callback);
 	add_page->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
+	window->end();
+
+	window->begin();
+	window->icon(img);
 	window->end();
 	window->show();
 }
@@ -92,6 +100,7 @@ void DiaryManager::inner::add_page_callback(Fl_Widget* button_ptr)
 {
 	//create editor window
 	Fl_Window* window  = new Fl_Window(720, 650, "write new page");
+	window->icon((const void*)LoadIcon(fl_display, MAKEINTRESOURCE(MAINICON)));
 
 
 	//init editor widget and append to it special  buffer
