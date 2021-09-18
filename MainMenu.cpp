@@ -118,11 +118,18 @@ void MainMenu::inner::read_callback(Fl_Widget* button_ptr, void* window)
 }
 void MainMenu::inner::create_diary_callback(Fl_Widget* button_ptr)
 {
+
+
 	Fl_Window* diary_creation_window = new Fl_Window(600, 150, "diary creation");
 	Fl_Input* input = new Fl_Input(120, 50, 450, 30, "enter diary path:");
 	input->callback((Fl_Callback*)get_new_diary_path_callback, (void*)diary_creation_window);
 	input->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
+	diary_creation_window->end();
+
+	Fl_RGB_Image* img = new Fl_PNG_Image("mspd.png");
+	diary_creation_window->begin();
+	diary_creation_window->icon(img);
 	diary_creation_window->end();
 	diary_creation_window->show();
 }

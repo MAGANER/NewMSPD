@@ -47,6 +47,9 @@ void DiaryManager::inner::read_pages_callback(Fl_Widget* button_ptr)
 	}
 	else
 	{
+		//icon, load and create it
+		Fl_RGB_Image* img = new Fl_PNG_Image("mspd.png");
+
 		//create browser window
 		Fl_Window* window = new Fl_Window(720, 650, "pages");
 
@@ -68,6 +71,10 @@ void DiaryManager::inner::read_pages_callback(Fl_Widget* button_ptr)
 		read_all_pages->callback(read_whole_diary_callback);
 		read_all_pages->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
+		window->end();
+
+		window->begin();
+		window->icon(img);
 		window->end();
 		window->show();
 	}
@@ -255,6 +262,10 @@ void DiaryManager::inner::show_page_callback(Fl_Widget* browser_ptr)
 	int choosen = browser->value()-1;
 	DiaryPage* page = pages[choosen];
 
+
+	//icon, load and create it
+	Fl_RGB_Image* img = new Fl_PNG_Image("mspd.png");
+
 	//create window
 	string label = page->topic + ":" + page->date;
 	Fl_Window* window = new Fl_Window(720, 650, label.c_str());
@@ -268,6 +279,10 @@ void DiaryManager::inner::show_page_callback(Fl_Widget* browser_ptr)
 	editor->clear_visible_focus();//editor ignores keyboard
 	window->resizable(editor);
 
+	window->end();
+
+	window->begin();
+	window->icon(img);
 	window->end();
 	window->show();
 
