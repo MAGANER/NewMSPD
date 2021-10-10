@@ -62,6 +62,8 @@ namespace DiaryManager
 		static void show_page_callback(Fl_Widget* browser_ptr);
 		static void read_whole_diary_callback(Fl_Widget* button_ptr);
 
+		static bool already_saved(const string& body);
+
 		namespace fs = std::filesystem;
 	};
 };

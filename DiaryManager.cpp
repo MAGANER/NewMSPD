@@ -220,15 +220,17 @@ void DiaryManager::inner::read_diary(const string& path)
 			//decrypt and split it to body, topic, date
 			auto key_iv = make_pair(_key, _iv);
 
-			cout << "encrypted:" << p.size() << endl;
 			string decrypted_text = Encryption::decrypt(key_iv, p);
 			vector<string> page_data = split_text(decrypted_text, "<del>");
 		
 			//if it's all right, add it to all pages
 			if (page_data.size() == 3)
 			{
-				DiaryPage* page = new DiaryPage(page_data[0], page_data[1], page_data[2]);
-				pages.push_back(page);
+				if (!already_saved(page_data[0]))
+				{
+					DiaryPage* page = new DiaryPage(page_data[0], page_data[1], page_data[2]);
+					pages.push_back(page);
+				}
 			}
 		}
 	}
@@ -258,7 +260,7 @@ void DiaryManager::inner::show_page_callback(Fl_Widget* browser_ptr)
 	//get browser widget
 	Fl_Browser* browser = (Fl_Browser*)browser_ptr;
 	
-	//get choosen page it counts since 1, so get x-1
+	//get choosen page it counts since 1, so get x-
 	int choosen = browser->value()-1;
 	DiaryPage* page = pages[choosen];
 
@@ -271,7 +273,7 @@ void DiaryManager::inner::show_page_callback(Fl_Widget* browser_ptr)
 	Fl_Window* window = new Fl_Window(720, 650, label.c_str());
 
 
-	//create editor and pass to it page text
+	//create editor and pass to its page text
 	Fl_Text_Buffer* buff = new Fl_Text_Buffer();
 	Fl_Text_Editor* editor = new Fl_Text_Editor(20, 20, 600, 600);
 	buff->text(page->body.c_str());
@@ -286,4 +288,12 @@ void DiaryManager::inner::show_page_callback(Fl_Widget* browser_ptr)
 	window->end();
 	window->show();
 
+}
+bool DiaryManager::inner::already_saved(const string& body)
+{
+	for (auto& page : pages)
+	{
+		if (page->body == body)return true;
+	}
+	return false;
 }
