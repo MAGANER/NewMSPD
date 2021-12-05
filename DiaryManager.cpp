@@ -47,11 +47,12 @@ void DiaryManager::inner::read_pages_callback(Fl_Widget* button_ptr)
 	}
 	else
 	{
-		//icon, load and create it
-		Fl_RGB_Image* img = new Fl_PNG_Image("mspd.png");
-
 		//create browser window
 		Fl_Window* window = new Fl_Window(720, 650, "pages");
+		Fl_RGB_Image* img = new Fl_PNG_Image("mspd.png");
+		window->begin();
+		window->icon(img);
+		window->end();
 
 		//init browser with data from loaded diary
 		//when you click list element
@@ -82,7 +83,10 @@ void DiaryManager::inner::read_pages_callback(Fl_Widget* button_ptr)
 void DiaryManager::inner::read_whole_diary_callback(Fl_Widget* button_ptr)
 {
 	Fl_Window* window = new Fl_Window(720, 650, "diary");
-
+	Fl_RGB_Image* img = new Fl_PNG_Image("mspd.png");
+	window->begin();
+	window->icon(img);
+	window->end();
 
 	//create editor and pass to it page text
 	Fl_Text_Buffer* buff = new Fl_Text_Buffer();
@@ -107,6 +111,10 @@ void DiaryManager::inner::add_page_callback(Fl_Widget* button_ptr)
 {
 	//create editor window
 	Fl_Window* window  = new Fl_Window(720, 650, "write new page");
+	Fl_RGB_Image* img = new Fl_PNG_Image("mspd.png");
+	window->begin();
+	window->icon(img);
+	window->end();
 	window->icon((const void*)LoadIcon(fl_display, MAKEINTRESOURCE(MAINICON)));
 
 
@@ -177,7 +185,6 @@ void DiaryManager::inner::save_diary()
 			string text = page->body + "<del>" + page->topic+"<del>" + page->date;
 			auto cipher = Encryption::encrypt(key_iv, text);
 
-			cout << cipher.size() << endl;
 
 			string end = "<bor>";
 			counter++;

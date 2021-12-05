@@ -7,6 +7,10 @@ Fl_Window* MainMenu::inner::init_window()
 	Fl_Window* window = new Fl_Window(WINDOW_WIDTH, WINDOW_HEIGHT);
 	window->label("My personal secret diary");
 	window->resize(200, 10, WINDOW_WIDTH, WINDOW_HEIGHT);
+	Fl_RGB_Image* img = new Fl_PNG_Image("mspd.png");
+	window->begin();
+	window->icon(img);
+	window->end();
 
 	return window;
 }
