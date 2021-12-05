@@ -50,9 +50,6 @@ void DiaryManager::inner::read_pages_callback(Fl_Widget* button_ptr)
 		//create browser window
 		Fl_Window* window = new Fl_Window(720, 650, "pages");
 		Fl_RGB_Image* img = new Fl_PNG_Image("mspd.png");
-		window->begin();
-		window->icon(img);
-		window->end();
 
 		//init browser with data from loaded diary
 		//when you click list element
@@ -112,11 +109,6 @@ void DiaryManager::inner::add_page_callback(Fl_Widget* button_ptr)
 	//create editor window
 	Fl_Window* window  = new Fl_Window(720, 650, "write new page");
 	Fl_RGB_Image* img = new Fl_PNG_Image("mspd.png");
-	window->begin();
-	window->icon(img);
-	window->end();
-	window->icon((const void*)LoadIcon(fl_display, MAKEINTRESOURCE(MAINICON)));
-
 
 	//init editor widget and append to it special  buffer
 	Fl_Text_Editor* editor = new Fl_Text_Editor(20, 20, 600, 600, "Write all you think");
@@ -135,6 +127,7 @@ void DiaryManager::inner::add_page_callback(Fl_Widget* button_ptr)
 	topic_input->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
 	window->end();
+	window->icon(img);
 	window->show();
 }
 void DiaryManager::inner::get_topic_callback(Fl_Input* input)
