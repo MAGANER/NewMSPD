@@ -69,8 +69,6 @@ void DiaryManager::inner::read_pages_callback(Fl_Widget* button_ptr)
 		read_all_pages->callback(read_whole_diary_callback);
 		read_all_pages->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
-		window->end();
-
 		window->begin();
 		window->icon(img);
 		window->end();
@@ -81,9 +79,6 @@ void DiaryManager::inner::read_whole_diary_callback(Fl_Widget* button_ptr)
 {
 	Fl_Window* window = new Fl_Window(720, 650, "diary");
 	Fl_RGB_Image* img = new Fl_PNG_Image("mspd.png");
-	window->begin();
-	window->icon(img);
-	window->end();
 
 	//create editor and pass to it page text
 	Fl_Text_Buffer* buff = new Fl_Text_Buffer();
@@ -101,6 +96,8 @@ void DiaryManager::inner::read_whole_diary_callback(Fl_Widget* button_ptr)
 	editor->clear_visible_focus();//editor ignores keyboard
 	window->resizable(editor);
 
+	window->begin();
+	window->icon(img);
 	window->end();
 	window->show();
 }
